@@ -1,0 +1,89 @@
+<?php
+
+namespace SmartDato\GlsItaly;
+
+use SmartDato\GlsItaly\Data\Credentials;
+use SmartDato\GlsItaly\Data\PickupCancellationData;
+use SmartDato\GlsItaly\Exceptions\ValidationException;
+use SmartDato\GlsItaly\LabelService\CloseWorkDayBuilder;
+use SmartDato\GlsItaly\LabelService\LabelServiceConnector;
+use SmartDato\GlsItaly\LabelService\Requests\DeleteSpedRequest;
+use SmartDato\GlsItaly\LabelService\Requests\ListSpedRequest;
+use SmartDato\GlsItaly\LabelService\Results\DeleteSpedResult;
+use SmartDato\GlsItaly\LabelService\Results\ListSpedResult;
+use SmartDato\GlsItaly\LabelService\ShipmentBuilder;
+use SmartDato\GlsItaly\Pickups\Legacy\LegacyPickupConnector;
+use SmartDato\GlsItaly\Pickups\Legacy\Requests\DeletePickupRequest;
+use SmartDato\GlsItaly\Pickups\PickupBuilder;
+use SmartDato\GlsItaly\Pickups\Results\DeletePickupResult;
+
+class GlsItaly
+{
+    public function __construct(protected ?Credentials $credentials = null) {}
+
+    public function withCredentials(Credentials $credentials): static
+    {
+        $clone = clone $this;
+        $clone->credentials = $credentials;
+
+        return $clone;
+    }
+
+    public function shipment(): ShipmentBuilder
+    {
+        return new ShipmentBuilder($this->labelServiceConnector(), $this->credentials);
+    }
+
+    public function closeWorkDay(): CloseWorkDayBuilder
+    {
+        return new CloseWorkDayBuilder($this->labelServiceConnector(), $this->credentials);
+    }
+
+    public function deleteShipment(string $shipmentNumber): DeleteSpedResult
+    {
+        $response = $this->labelServiceConnector()->call(
+            new DeleteSpedRequest($this->requireCredentials(), $shipmentNumber),
+        );
+
+        return DeleteSpedResult::fromResponse($response, $shipmentNumber);
+    }
+
+    public function listPendingShipments(): ListSpedResult
+    {
+        $response = $this->labelServiceConnector()->call(
+            new ListSpedRequest($this->requireCredentials()),
+        );
+
+        return ListSpedResult::fromResponse($response);
+    }
+
+    public function pickup(): PickupBuilder
+    {
+        return new PickupBuilder($this->legacyPickupConnector(), $this->credentials);
+    }
+
+    public function cancelPickup(PickupCancellationData $cancellation): DeletePickupResult
+    {
+        $response = $this->legacyPickupConnector()->call(
+            new DeletePickupRequest($this->requireCredentials(), [$cancellation]),
+        );
+
+        return DeletePickupResult::fromResponse($response);
+    }
+
+    protected function labelServiceConnector(): LabelServiceConnector
+    {
+        return new LabelServiceConnector;
+    }
+
+    protected function legacyPickupConnector(): LegacyPickupConnector
+    {
+        return new LegacyPickupConnector;
+    }
+
+    protected function requireCredentials(): Credentials
+    {
+        return $this->credentials
+            ?? throw new ValidationException('Credentials are required, call withCredentials() first.');
+    }
+}

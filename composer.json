@@ -1,0 +1,82 @@
+{
+    "name": "smart-dato/gls-italy",
+    "description": "Fluent PHP SDK for the GLS Italy carrier web services: label service, pickups, tracking, stock release and address check",
+    "keywords": [
+        "SmartDato",
+        "laravel",
+        "gls-italy",
+        "gls",
+        "carrier",
+        "shipping"
+    ],
+    "homepage": "https://github.com/smart-dato/gls-italy",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SmartDato",
+            "email": "info@smart-dato.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "illuminate/contracts": "^11.0||^12.0||^13.0",
+        "saloonphp/saloon": "^4.0",
+        "smalot/pdfparser": "^2.7",
+        "spatie/laravel-data": "^4.7",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.14",
+        "nunomaduro/collision": "^8.8",
+        "larastan/larastan": "^3.0",
+        "orchestra/testbench": "^11.0.0||^10.0.0||^9.0.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "spatie/laravel-ray": "^1.35"
+    },
+    "autoload": {
+        "psr-4": {
+            "SmartDato\\GlsItaly\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SmartDato\\GlsItaly\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SmartDato\\GlsItaly\\GlsItalyServiceProvider"
+            ],
+            "aliases": {
+                "GlsItaly": "SmartDato\\GlsItaly\\Facades\\GlsItaly"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
