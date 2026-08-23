@@ -141,6 +141,28 @@ class ShipmentBuilder
     }
 
     /**
+     * Seed the builder from a ready-made record, e.g. produced by a mapper.
+     */
+    public function fromData(ShipmentData $shipment): self
+    {
+        $this->contractCode = $shipment->contractCode;
+        $this->recipient = $shipment->recipient;
+        $this->parcel = $shipment->parcel;
+        $this->cashOnDelivery = $shipment->cashOnDelivery;
+        $this->codCollectionMode = $shipment->codCollectionMode;
+        $this->note = $shipment->note;
+        $this->additionalNote = $shipment->additionalNote;
+        $this->clientReference = $shipment->clientReference;
+        $this->bda = $shipment->bda;
+        $this->services = $shipment->services;
+        $this->labelFormat = $shipment->labelFormat;
+        $this->progressiveCounter = $shipment->progressiveCounter;
+        $this->deliveryTimeNote = $shipment->deliveryTimeNote;
+
+        return $this;
+    }
+
+    /**
      * @throws ValidationException
      */
     public function toData(): ShipmentData

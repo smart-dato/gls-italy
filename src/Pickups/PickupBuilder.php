@@ -174,6 +174,33 @@ class PickupBuilder
     }
 
     /**
+     * Seed the builder from a ready-made record, e.g. produced by a mapper.
+     */
+    public function fromData(PickupData $pickup): self
+    {
+        $this->contractCode = $pickup->contractCode;
+        $this->requesterName = $pickup->requesterName;
+        $this->bda = $pickup->bda;
+        $this->pickupAddress = $pickup->pickupAddress;
+        $this->pickupDate = $pickup->pickupDate;
+        $this->parcelCount = $pickup->parcelCount;
+        $this->weight = $pickup->weight;
+        $this->deliveryAddress = $pickup->deliveryAddress;
+        $this->note = $pickup->note;
+        $this->notifyEmail = $pickup->notifyEmail;
+        $this->phone = $pickup->phone;
+        $this->pickupLocationEmail = $pickup->pickupLocationEmail;
+        $this->services = $pickup->services;
+        $this->morningFrom = $pickup->morningFrom;
+        $this->morningTo = $pickup->morningTo;
+        $this->afternoonFrom = $pickup->afternoonFrom;
+        $this->afternoonTo = $pickup->afternoonTo;
+        $this->parcelType = $pickup->parcelType;
+
+        return $this;
+    }
+
+    /**
      * @throws ValidationException
      */
     public function toData(): PickupData

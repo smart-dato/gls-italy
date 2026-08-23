@@ -1,5 +1,6 @@
 <?php
 
+use SmartDato\GlsItaly\Data\PickupData;
 use SmartDato\GlsItaly\Exceptions\ValidationException;
 use SmartDato\GlsItaly\GlsItaly;
 use SmartDato\GlsItaly\Tests\Fixtures\GlsFixtures;
@@ -50,4 +51,37 @@ test('deleting without credentials fails with an actionable message', function (
 test('the facade resolves the entry object from the container', function (): void {
     expect(SmartDato\GlsItaly\Facades\GlsItaly::withCredentials(GlsFixtures::credentials()))
         ->toBeInstanceOf(GlsItaly::class);
+});
+
+test('fromData seeds the shipment builder with a complete record', function (): void {
+    $data = GlsFixtures::shipmentData(['cashOnDelivery' => 25.5, 'codCollectionMode' => 'CONT', 'services' => ['01', '36']]);
+
+    $roundTripped = new GlsItaly()->withCredentials(GlsFixtures::credentials())
+        ->shipment()
+        ->fromData($data)
+        ->toData();
+
+    expect($roundTripped)->toEqual($data);
+});
+
+test('fromData seeds the pickup builder with a complete record', function (): void {
+    $data = new PickupData(
+        contractCode: '9876',
+        requesterName: 'GLSXMLTEST',
+        bda: 'P2600007777',
+        pickupAddress: GlsFixtures::recipient(),
+        pickupDate: new DateTimeImmutable('2026-09-01'),
+        parcelCount: 2,
+        weight: 10.5,
+        note: 'fragile',
+        notifyEmail: 'ops@example.com',
+        phone: '+390471998877',
+    );
+
+    $roundTripped = new GlsItaly()->withCredentials(GlsFixtures::credentials())
+        ->pickup()
+        ->fromData($data)
+        ->toData();
+
+    expect($roundTripped)->toEqual($data);
 });

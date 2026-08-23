@@ -2,6 +2,11 @@
 
 All notable changes to `gls-italy` will be documented in this file.
 
+## 0.0.2 - 2026-08-23
+
+- `ShipmentBuilder::fromData()` and `PickupBuilder::fromData()` seed a builder
+  from a ready-made record, e.g. produced by a consumer-side mapper.
+
 ## 0.0.1 - 2026-08-23
 
 Initial release, extracted from the OLC GLS Italy integration with the wire
