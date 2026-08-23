@@ -2,8 +2,13 @@
 
 namespace SmartDato\GlsItaly;
 
+use SmartDato\GlsItaly\AddressCheck\CheckAddressConnector;
+use SmartDato\GlsItaly\AddressCheck\Requests\CheckAddressRequest;
+use SmartDato\GlsItaly\AddressCheck\Results\AddressCheckResult;
+use SmartDato\GlsItaly\Data\AddressQueryData;
 use SmartDato\GlsItaly\Data\Credentials;
 use SmartDato\GlsItaly\Data\PickupCancellationData;
+use SmartDato\GlsItaly\Data\RedeliveryData;
 use SmartDato\GlsItaly\Exceptions\ValidationException;
 use SmartDato\GlsItaly\LabelService\CloseWorkDayBuilder;
 use SmartDato\GlsItaly\LabelService\LabelServiceConnector;
@@ -16,6 +21,9 @@ use SmartDato\GlsItaly\Pickups\Legacy\LegacyPickupConnector;
 use SmartDato\GlsItaly\Pickups\Legacy\Requests\DeletePickupRequest;
 use SmartDato\GlsItaly\Pickups\PickupBuilder;
 use SmartDato\GlsItaly\Pickups\Results\DeletePickupResult;
+use SmartDato\GlsItaly\StockRelease\Requests\RedeliveryParcelRequest;
+use SmartDato\GlsItaly\StockRelease\Results\StockReleaseResult;
+use SmartDato\GlsItaly\StockRelease\StockReleaseConnector;
 use SmartDato\GlsItaly\Tracking\Requests\TrackByBdaRequest;
 use SmartDato\GlsItaly\Tracking\Requests\TrackByShipmentNumberRequest;
 use SmartDato\GlsItaly\Tracking\Requests\TrackPickupRequest;
@@ -104,6 +112,24 @@ class GlsItaly
         return ShipmentTrackingResult::fromResponse($this->trackingConnector()->call(
             new TrackRetourRequest($departureSede, $shipmentNumber, $contractSede, $contractCode),
         ));
+    }
+
+    public function releaseStock(RedeliveryData ...$redeliveries): StockReleaseResult
+    {
+        $response = (new StockReleaseConnector)->call(
+            new RedeliveryParcelRequest($this->requireCredentials(), array_values($redeliveries)),
+        );
+
+        return StockReleaseResult::fromResponse($response);
+    }
+
+    public function checkAddress(AddressQueryData $address): AddressCheckResult
+    {
+        $response = (new CheckAddressConnector)->call(
+            new CheckAddressRequest($this->requireCredentials(), $address),
+        );
+
+        return AddressCheckResult::fromResponse($response);
     }
 
     protected function labelServiceConnector(): LabelServiceConnector

@@ -4,6 +4,7 @@ namespace SmartDato\GlsItaly\Pickups\Legacy\Requests;
 
 use SmartDato\GlsItaly\Data\Credentials;
 use SmartDato\GlsItaly\Data\PickupCancellationData;
+use SmartDato\GlsItaly\Support\LegacyXmlRequest;
 
 class DeletePickupRequest extends LegacyXmlRequest
 {

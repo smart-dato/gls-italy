@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \SmartDato\GlsItaly\Tracking\Results\ShipmentTrackingResult trackByBda(string $departureSede, string $bda, string $contractCode)
  * @method static \SmartDato\GlsItaly\Tracking\Results\PickupTrackingResult trackPickup(string $departureSede, string $pickupNumber, string $contractCode)
  * @method static \SmartDato\GlsItaly\Tracking\Results\ShipmentTrackingResult trackRetour(string $departureSede, string $shipmentNumber, string $contractSede, string $contractCode)
+ * @method static \SmartDato\GlsItaly\StockRelease\Results\StockReleaseResult releaseStock(\SmartDato\GlsItaly\Data\RedeliveryData ...$redeliveries)
+ * @method static \SmartDato\GlsItaly\AddressCheck\Results\AddressCheckResult checkAddress(\SmartDato\GlsItaly\Data\AddressQueryData $address)
  *
  * @see \SmartDato\GlsItaly\GlsItaly
  */

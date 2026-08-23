@@ -2,6 +2,16 @@
 
 All notable changes to `gls-italy` will be documented in this file.
 
+## 0.0.4 - 2026-08-23
+
+- Stock release / svincolo giacenze (MU276): `releaseStock()` POSTs the
+  spec-compliant XML (profile credentials, GG/MM/AA redelivery date) to
+  redelivery_parcel.php and parses the per-shipment `<Svincolo>` outcomes.
+- Address validation: `checkAddress()` replicates the envelope PHP's native
+  SoapClient sent to wscheckaddress.asmx byte for byte (verified against a
+  captured SoapClient request) and exposes the raw `<Esito>` verdict.
+- `LegacyXmlRequest` moved to the `Support` namespace.
+
 ## 0.0.3 - 2026-08-23
 
 - Tracking (MU40): typed GET requests for the Track & Trace XML feed

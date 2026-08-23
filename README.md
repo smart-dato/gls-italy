@@ -23,8 +23,8 @@ out.
 | Label service — `AddParcel`, `CloseWorkDay`, `DeleteSped`, `ListSped` | MU162 | ✅ since `0.0.1` |
 | Pickups — `addpickup.php` / `deletepickup.php` | MU302 | ✅ since `0.0.1` |
 | Tracking — `get_xml_track.php` | MU40 | ✅ since `0.0.3` |
-| Stock release (svincolo giacenze) — `redelivery_parcel.php` | MU276 | planned |
-| Address validation — `wscheckaddress.asmx` | — | planned |
+| Stock release (svincolo giacenze) — `redelivery_parcel.php` | MU276 | ✅ since `0.0.4` |
+| Address validation — `wscheckaddress.asmx` | — | ✅ since `0.0.4` |
 
 The label service and pickup wire formats are verified byte for byte against
 recorded production calls.

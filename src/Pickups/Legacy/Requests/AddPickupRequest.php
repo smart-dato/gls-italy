@@ -6,6 +6,7 @@ use SmartDato\GlsItaly\Data\Credentials;
 use SmartDato\GlsItaly\Data\PickupData;
 use SmartDato\GlsItaly\Data\RecipientData;
 use SmartDato\GlsItaly\Support\Alfa;
+use SmartDato\GlsItaly\Support\LegacyXmlRequest;
 
 class AddPickupRequest extends LegacyXmlRequest
 {

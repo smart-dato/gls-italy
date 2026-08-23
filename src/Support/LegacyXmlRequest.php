@@ -1,12 +1,11 @@
 <?php
 
-namespace SmartDato\GlsItaly\Pickups\Legacy\Requests;
+namespace SmartDato\GlsItaly\Support;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasStringBody;
-use SmartDato\GlsItaly\Support\Entities;
 
 /**
  * The legacy channel builds its XML by string concatenation — ported verbatim
