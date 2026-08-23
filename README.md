@@ -22,12 +22,37 @@ out.
 | --- | --- | --- |
 | Label service — `AddParcel`, `CloseWorkDay`, `DeleteSped`, `ListSped` | MU162 | ✅ since `0.0.1` |
 | Pickups — `addpickup.php` / `deletepickup.php` | MU302 | ✅ since `0.0.1` |
-| Tracking — `get_xml_track.php` | MU40 | planned |
+| Tracking — `get_xml_track.php` | MU40 | ✅ since `0.0.3` |
 | Stock release (svincolo giacenze) — `redelivery_parcel.php` | MU276 | planned |
 | Address validation — `wscheckaddress.asmx` | — | planned |
 
 The label service and pickup wire formats are verified byte for byte against
 recorded production calls.
+
+## Track a shipment or pickup
+
+Tracking needs no password — just the depot and client/contract codes:
+
+```php
+$result = GlsItaly::trackByShipmentNumber('BZ', '620873098', '1234567');
+
+foreach ($result->events() as $event) {
+    $event->datetime;   // Carbon, or null when the feed value was unparseable
+    $event->code;       // e.g. '901'; '906' is delivered
+    $event->subsidiary; // the depot the event happened at
+    $event->warning;    // true when the datetime could not be parsed
+}
+
+$result->shipmentNumber();
+$result->destinationSede();
+$result->retourReference(); // ['sede' => 'VE', 'number' => '123456789'] when GLS created a retour
+
+$pickup = GlsItaly::trackPickup('BB', '9660004359', '2557');
+$pickup->pickupEvents();    // TRACKINGRITIRO events
+$pickup->shipmentEvents();  // events of the shipment the pickup generated
+```
+
+`trackByBda()` and `trackRetour()` cover the BDA and retour lookups.
 
 ## Requirements
 

@@ -2,6 +2,15 @@
 
 All notable changes to `gls-italy` will be documented in this file.
 
+## 0.0.3 - 2026-08-23
+
+- Tracking (MU40): typed GET requests for the Track & Trace XML feed
+  (`trackByShipmentNumber`, `trackByBda`, `trackPickup`, `trackRetour`, plus a
+  pickups-by-date-range request), with `ShipmentTrackingResult` /
+  `PickupTrackingResult` owning the flat six-children TRACKING walker, the
+  blank-time→20:01 and `H.i` datetime quirks, retour-note splitting and
+  TESTOERRORE handling.
+
 ## 0.0.2 - 2026-08-23
 
 - `ShipmentBuilder::fromData()` and `PickupBuilder::fromData()` seed a builder

@@ -16,6 +16,13 @@ use SmartDato\GlsItaly\Pickups\Legacy\LegacyPickupConnector;
 use SmartDato\GlsItaly\Pickups\Legacy\Requests\DeletePickupRequest;
 use SmartDato\GlsItaly\Pickups\PickupBuilder;
 use SmartDato\GlsItaly\Pickups\Results\DeletePickupResult;
+use SmartDato\GlsItaly\Tracking\Requests\TrackByBdaRequest;
+use SmartDato\GlsItaly\Tracking\Requests\TrackByShipmentNumberRequest;
+use SmartDato\GlsItaly\Tracking\Requests\TrackPickupRequest;
+use SmartDato\GlsItaly\Tracking\Requests\TrackRetourRequest;
+use SmartDato\GlsItaly\Tracking\Results\PickupTrackingResult;
+use SmartDato\GlsItaly\Tracking\Results\ShipmentTrackingResult;
+use SmartDato\GlsItaly\Tracking\TrackingConnector;
 
 class GlsItaly
 {
@@ -71,9 +78,42 @@ class GlsItaly
         return DeletePickupResult::fromResponse($response);
     }
 
+    public function trackByShipmentNumber(string $departureSede, string $shipmentNumber, string $clientCode): ShipmentTrackingResult
+    {
+        return ShipmentTrackingResult::fromResponse($this->trackingConnector()->call(
+            new TrackByShipmentNumberRequest($departureSede, $shipmentNumber, $clientCode),
+        ));
+    }
+
+    public function trackByBda(string $departureSede, string $bda, string $contractCode): ShipmentTrackingResult
+    {
+        return ShipmentTrackingResult::fromResponse($this->trackingConnector()->call(
+            new TrackByBdaRequest($departureSede, $bda, $contractCode),
+        ));
+    }
+
+    public function trackPickup(string $departureSede, string $pickupNumber, string $contractCode): PickupTrackingResult
+    {
+        return PickupTrackingResult::fromResponse($this->trackingConnector()->call(
+            new TrackPickupRequest($departureSede, $pickupNumber, $contractCode),
+        ));
+    }
+
+    public function trackRetour(string $departureSede, string $shipmentNumber, string $contractSede, string $contractCode): ShipmentTrackingResult
+    {
+        return ShipmentTrackingResult::fromResponse($this->trackingConnector()->call(
+            new TrackRetourRequest($departureSede, $shipmentNumber, $contractSede, $contractCode),
+        ));
+    }
+
     protected function labelServiceConnector(): LabelServiceConnector
     {
         return new LabelServiceConnector;
+    }
+
+    protected function trackingConnector(): TrackingConnector
+    {
+        return new TrackingConnector;
     }
 
     protected function legacyPickupConnector(): LegacyPickupConnector
