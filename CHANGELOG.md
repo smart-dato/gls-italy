@@ -2,6 +2,14 @@
 
 All notable changes to `gls-italy` will be documented in this file.
 
+## 0.0.5 - 2026-11-03
+
+- Direct shop delivery (MU162): optional `partnerShopId` and `shopId` fields and
+  the fluent `shopDelivery()` builder method emit matching `PARTNER_SHOP_ID`
+  and `SHOP_ID` tags in AddParcel and CloseWorkDay.
+- Reject incomplete or invalid shop identifiers and cash on delivery for shops.
+- Standard shipment requests retain their existing wire format.
+
 ## 0.0.4 - 2026-08-23
 
 - Stock release / svincolo giacenze (MU276): `releaseStock()` POSTs the
