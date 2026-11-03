@@ -28,5 +28,7 @@ final class ShipmentData extends Data
         public LabelFormat $labelFormat = LabelFormat::Pdf,
         public ?int $progressiveCounter = null,
         public ?string $deliveryTimeNote = null,
+        public ?string $partnerShopId = null,
+        public ?string $shopId = null,
     ) {}
 }

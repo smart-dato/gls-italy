@@ -4,6 +4,7 @@ namespace SmartDato\GlsItaly\LabelService\Xml;
 
 use SimpleXMLElement;
 use SmartDato\GlsItaly\Data\ShipmentData;
+use SmartDato\GlsItaly\Exceptions\ValidationException;
 use SmartDato\GlsItaly\Support\Alfa;
 
 /**
@@ -15,6 +16,19 @@ class ParcelXmlSerializer
 {
     public function serialize(ShipmentData $shipment): SimpleXMLElement
     {
+        $hasShop = $shipment->partnerShopId !== null || $shipment->shopId !== null;
+        if ($hasShop && (trim($shipment->partnerShopId ?? '') === '' || trim($shipment->shopId ?? '') === '')) {
+            throw new ValidationException('Shop delivery requires both a partner shop ID and a shop ID.');
+        }
+
+        if ($hasShop && $shipment->cashOnDelivery > 0.0) {
+            throw new ValidationException('GLS Italy shop delivery does not support cash on delivery.');
+        }
+
+        if ($hasShop && (! preg_match('/\A[A-Za-z0-9_-]+\z/', $shipment->partnerShopId ?? '') || ! preg_match('/\A[A-Za-z0-9_-]+\z/', $shipment->shopId ?? ''))) {
+            throw new ValidationException('Shop delivery IDs may contain only letters, digits, underscores and hyphens.');
+        }
+
         $recipient = $shipment->recipient;
 
         $xml = new SimpleXMLElement('<Parcel/>');
@@ -47,6 +61,11 @@ class ParcelXmlSerializer
         $xml->addChild('ServiziAccessori', implode(',', $shipment->services));
         if ($shipment->deliveryTimeNote !== null) {
             $xml->addChild('OrarioNoteGDO', $shipment->deliveryTimeNote);
+        }
+
+        if ($hasShop) {
+            $xml->addChild('PARTNER_SHOP_ID', $shipment->partnerShopId);
+            $xml->addChild('SHOP_ID', $shipment->shopId);
         }
 
         return $xml;

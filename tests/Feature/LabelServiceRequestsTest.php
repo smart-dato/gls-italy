@@ -2,12 +2,48 @@
 
 use SmartDato\GlsItaly\Data\ParcelData;
 use SmartDato\GlsItaly\Enums\LabelFormat;
+use SmartDato\GlsItaly\Exceptions\ValidationException;
+use SmartDato\GlsItaly\GlsItaly;
 use SmartDato\GlsItaly\LabelService\Requests\AddParcelRequest;
 use SmartDato\GlsItaly\LabelService\Requests\CloseWorkDayRequest;
 use SmartDato\GlsItaly\LabelService\Requests\DeleteSpedRequest;
 use SmartDato\GlsItaly\LabelService\Requests\ListSpedRequest;
 use SmartDato\GlsItaly\Support\Soap12Envelope;
 use SmartDato\GlsItaly\Tests\Fixtures\GlsFixtures;
+
+test('shop delivery identifiers survive the builder and match in label creation and closing', function (): void {
+    $data = new GlsItaly()->shipment()
+        ->fromData(GlsFixtures::shipmentData())
+        ->shopDelivery('PRP_IT', '0012923')
+        ->toData();
+    $data = new GlsItaly()->shipment()->fromData($data)->toData();
+
+    $add = new AddParcelRequest(GlsFixtures::credentials(), $data);
+    $close = new CloseWorkDayRequest(GlsFixtures::credentials(), [$data]);
+
+    expect($add->methodXml())->toContain('<PARTNER_SHOP_ID>PRP_IT</PARTNER_SHOP_ID><SHOP_ID>0012923</SHOP_ID>')
+        ->and($close->methodXml())->toContain('<PARTNER_SHOP_ID>PRP_IT</PARTNER_SHOP_ID><SHOP_ID>0012923</SHOP_ID>');
+});
+
+test('shop delivery rejects incomplete identifiers and cash on delivery', function (array $overrides, string $message): void {
+    $data = GlsFixtures::shipmentData($overrides);
+    $request = new AddParcelRequest(GlsFixtures::credentials(), $data);
+
+    expect(fn () => $request->methodXml())->toThrow(ValidationException::class, $message);
+})->with([
+    'missing partner' => [['shopId' => '123'], 'Shop delivery requires both a partner shop ID and a shop ID.'],
+    'missing shop' => [['partnerShopId' => 'PRP_IT'], 'Shop delivery requires both a partner shop ID and a shop ID.'],
+    'blank partner' => [['partnerShopId' => ' ', 'shopId' => '123'], 'Shop delivery requires both a partner shop ID and a shop ID.'],
+    'blank shop' => [['partnerShopId' => 'PRP_IT', 'shopId' => ' '], 'Shop delivery requires both a partner shop ID and a shop ID.'],
+    'cash on delivery' => [['partnerShopId' => 'PRP_IT', 'shopId' => '123', 'cashOnDelivery' => 25.5], 'GLS Italy shop delivery does not support cash on delivery.'],
+]);
+
+test('shop identifiers reject special characters instead of silently corrupting the identifiers', function (): void {
+    $data = GlsFixtures::shipmentData(['partnerShopId' => 'partner&test', 'shopId' => 'shop&test']);
+    $request = new AddParcelRequest(GlsFixtures::credentials(), $data);
+
+    expect(fn () => $request->methodXml())->toThrow(ValidationException::class, 'Shop delivery IDs may contain only letters, digits, underscores and hyphens.');
+});
 
 test('add parcel request emits the recorded wire format byte for byte', function (): void {
     $request = new AddParcelRequest(GlsFixtures::credentials(), GlsFixtures::shipmentData());
