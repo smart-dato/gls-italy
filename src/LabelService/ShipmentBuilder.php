@@ -40,6 +40,10 @@ class ShipmentBuilder
 
     protected ?string $deliveryTimeNote = null;
 
+    protected ?string $partnerShopId = null;
+
+    protected ?string $shopId = null;
+
     public function __construct(
         protected readonly LabelServiceConnector $connector,
         protected ?Credentials $credentials = null,
@@ -140,6 +144,14 @@ class ShipmentBuilder
         return $this;
     }
 
+    public function shopDelivery(string $partnerShopId, string $shopId): self
+    {
+        $this->partnerShopId = $partnerShopId;
+        $this->shopId = $shopId;
+
+        return $this;
+    }
+
     /**
      * Seed the builder from a ready-made record, e.g. produced by a mapper.
      */
@@ -158,6 +170,8 @@ class ShipmentBuilder
         $this->labelFormat = $shipment->labelFormat;
         $this->progressiveCounter = $shipment->progressiveCounter;
         $this->deliveryTimeNote = $shipment->deliveryTimeNote;
+        $this->partnerShopId = $shipment->partnerShopId;
+        $this->shopId = $shipment->shopId;
 
         return $this;
     }
@@ -183,6 +197,8 @@ class ShipmentBuilder
             labelFormat: $this->labelFormat,
             progressiveCounter: $this->progressiveCounter,
             deliveryTimeNote: $this->deliveryTimeNote,
+            partnerShopId: $this->partnerShopId,
+            shopId: $this->shopId,
         );
     }
 
